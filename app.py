@@ -11,8 +11,8 @@ from linebot.exceptions import (
 from linebot.models import *
 
 import tempfile, os
-from config import client_id, client_secret, album_id, access_token, refresh_token, line_channel_access_token, \
-    line_channel_secret
+from config import client_id, client_secret, fgoAlbum_id, access_token, refresh_token, line_channel_access_token, \
+    line_channel_secret, gmAlbum_id
 
 app = Flask(__name__)
 
@@ -24,6 +24,8 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 #Get Content List
 clientDrawList = ["抽", "抽卡"]
 clientEatList = ["吃什麼", "要吃啥", "甲三小"]
+clientDoList = ["要乾麻", "杯沖啥", "接下來?"]
+clientGmList = ["早", "早安", "morning", "good morning", "早r"]
 
 #Reply Content List
 foodList = ["麥噹噹", "肯德雞", "拿坡里", "胖老爹", "小火鍋", "鐵板類", "咖哩飯", "肉燥飯", "刀削麵",
@@ -91,11 +93,12 @@ def handle_message(event):
     el"""
     if isinstance(event.message, TextMessage):
         clientText = event.message.text
+
         #Draw
         for i in clientDrawList:
             if clientText == i:
                 client = ImgurClient(client_id, client_secret)
-                images = client.get_album_images(album_id)
+                images = client.get_album_images(fgoAlbum_id)
                 index = random.randint(0, len(images) - 1)
                 url = images[index].link
                 image_message = ImageSendMessage(
@@ -105,6 +108,7 @@ def handle_message(event):
                 line_bot_api.reply_message(
                     event.reply_token, image_message)
                 return 0
+
         #What to eat
         for i in clientEatList:
             if clientText == i:
@@ -112,6 +116,31 @@ def handle_message(event):
                 text = foodList[index]
                 line_bot_api.reply_message(event.reply_token, [TextSendMessage(text = text)])
                 return 0
+
+        #What to do
+        for i in clientDoList:
+            if clientText == i:
+                index = random.randint(0, len(entertainmentList) - 1)
+                text = entertainmentList[index]
+                line_bot_api.reply_message(event.reply_token, [TextSendMessage(text = text)])
+                return 0
+
+        #Good morning
+        for i in clientGmList:
+            if clientText == i:
+                client = ImgurClient(client_id, client_secret)
+                images = client.get_album_images(gmAlbum_id)
+                index = random.randint(0, len(images) - 1)
+                url = images[index].link
+                image_message = ImageSendMessage(
+                    original_content_url=url,
+                    preview_image_url=url
+                )
+                line_bot_api.reply_message(
+                    event.reply_token, image_message)
+                return 0
+
+        return 0
 
         """if event.message.text == "抽卡" or event.message.text == "抽":
             client = ImgurClient(client_id, client_secret)
@@ -133,8 +162,7 @@ def handle_message(event):
                     TextSendMessage(text = text)
                 ])
             return 0
-        el"""
-        if event.message.text == "要乾麻":
+        elif event.message.text == "要乾麻":
             index = random.randint(0, len(entertainmentList) - 1)
             text = entertainmentList[index]
             line_bot_api.reply_message(
@@ -143,8 +171,6 @@ def handle_message(event):
                 ])
             return 0
         else:
-            return 0
-        """else:
             line_bot_api.reply_message(
                 event.reply_token, [
                     TextSendMessage(text=' yoyo'),
