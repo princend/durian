@@ -21,7 +21,8 @@ handler = WebhookHandler(line_channel_secret)
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
-foodList = ["麥當當", "肯德雞", "拿坡里", "胖老爹"]
+foodList = ["麥噹噹", "肯德雞", "拿坡里", "胖老爹", "小火鍋", "鐵板類", "咖哩飯", "肉燥飯", "刀削麵",
+            "拉麵", "炒飯", "飯捲", "炸物", "湯包", "鍋貼"]
 
 @app.route("/callback", methods=['POST'])
 def callback():
