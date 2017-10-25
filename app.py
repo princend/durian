@@ -21,6 +21,7 @@ handler = WebhookHandler(line_channel_secret)
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
+foodList = ["麥當當", "肯德雞", "拿坡里", "胖老爹"]
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -92,6 +93,16 @@ def handle_message(event):
             )
             line_bot_api.reply_message(
                 event.reply_token, image_message)
+            return 0
+        elif event.message.text == "吃什麼":
+            index = random.randint(0, len(foodList) - 1)
+            text = foodList[index]
+            line_bot_api.reply_message(
+                event.reply_token, [
+                    TextSendMessage(text = text)
+                ])
+            return 0
+        else:
             return 0
         """else:
             line_bot_api.reply_message(
