@@ -24,6 +24,8 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 foodList = ["麥噹噹", "肯德雞", "拿坡里", "胖老爹", "小火鍋", "鐵板類", "咖哩飯", "肉燥飯", "刀削麵",
             "拉麵", "炒飯", "飯捲", "炸物", "湯包", "鍋貼"]
 
+entertainmentList = ["打街機", "玩桌遊", "書店", "逛百貨", "回家", "看電影", "唱歌"]
+
 @app.route("/callback", methods=['POST'])
 def callback():
     # get X-Line-Signature header value
@@ -98,6 +100,14 @@ def handle_message(event):
         elif event.message.text == "吃什麼":
             index = random.randint(0, len(foodList) - 1)
             text = foodList[index]
+            line_bot_api.reply_message(
+                event.reply_token, [
+                    TextSendMessage(text = text)
+                ])
+            return 0
+        elif event.message.text == "要乾麻":
+            index = random.randint(0, len(entertainmentList) - 1)
+            text = entertainmentList[index]
             line_bot_api.reply_message(
                 event.reply_token, [
                     TextSendMessage(text = text)
