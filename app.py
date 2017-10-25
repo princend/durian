@@ -21,10 +21,15 @@ handler = WebhookHandler(line_channel_secret)
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
+#Get Content List
+clientDrawList = ["抽", "抽卡"]
+clientEatList = ["吃什麼", "要吃啥"]
+
+#Reply Content List
 foodList = ["麥噹噹", "肯德雞", "拿坡里", "胖老爹", "小火鍋", "鐵板類", "咖哩飯", "肉燥飯", "刀削麵",
             "拉麵", "炒飯", "飯捲", "炸物", "湯包", "鍋貼"]
-
 entertainmentList = ["打街機", "玩桌遊", "書店", "逛百貨", "回家", "看電影", "唱歌"]
+
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -85,7 +90,21 @@ def handle_message(event):
         ext = 'm4a'
     el"""
     if isinstance(event.message, TextMessage):
-        if event.message.text == "抽卡" or event.message.text == "抽":
+        for i in clientDrawList:
+            if event.message.text == i:
+                client = ImgurClient(client_id, client_secret)
+                images = client.get_album_images(album_id)
+                index = random.randint(0, len(images) - 1)
+                url = images[index].link
+                image_message = ImageSendMessage(
+                    original_content_url=url,
+                    preview_image_url=url
+                )
+                line_bot_api.reply_message(
+                    event.reply_token, image_message)
+                return 0
+
+        """if event.message.text == "抽卡" or event.message.text == "抽":
             client = ImgurClient(client_id, client_secret)
             images = client.get_album_images(album_id)
             index = random.randint(0, len(images) - 1)
@@ -97,7 +116,8 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token, image_message)
             return 0
-        elif event.message.text == "吃什麼":
+        el"""
+        if event.message.text == "吃什麼":
             index = random.randint(0, len(foodList) - 1)
             text = foodList[index]
             line_bot_api.reply_message(
