@@ -23,7 +23,7 @@ static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
 
 #Get Content List
 clientDrawList = ["抽", "抽卡"]
-clientEatList = ["吃什麼", "要吃啥"]
+clientEatList = ["吃什麼", "要吃啥", "甲三小"]
 
 #Reply Content List
 foodList = ["麥噹噹", "肯德雞", "拿坡里", "胖老爹", "小火鍋", "鐵板類", "咖哩飯", "肉燥飯", "刀削麵",
@@ -90,8 +90,10 @@ def handle_message(event):
         ext = 'm4a'
     el"""
     if isinstance(event.message, TextMessage):
+        clientText = event.message.text
+        #Draw
         for i in clientDrawList:
-            if event.message.text == i:
+            if clientText == i:
                 client = ImgurClient(client_id, client_secret)
                 images = client.get_album_images(album_id)
                 index = random.randint(0, len(images) - 1)
@@ -102,6 +104,13 @@ def handle_message(event):
                 )
                 line_bot_api.reply_message(
                     event.reply_token, image_message)
+                return 0
+        #What to eat
+        for i in clientEatList:
+            if clientText == i:
+                index = random.randint(0, len(foodList) - 1)
+                text = foodList[index]
+                line_bot_api.reply_message(event.reply_token, [TextSendMessage(text = text)])
                 return 0
 
         """if event.message.text == "抽卡" or event.message.text == "抽":
@@ -116,8 +125,7 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token, image_message)
             return 0
-        el"""
-        if event.message.text == "吃什麼":
+        elif event.message.text == "吃什麼":
             index = random.randint(0, len(foodList) - 1)
             text = foodList[index]
             line_bot_api.reply_message(
@@ -125,7 +133,8 @@ def handle_message(event):
                     TextSendMessage(text = text)
                 ])
             return 0
-        elif event.message.text == "要乾麻":
+        el"""
+        if event.message.text == "要乾麻":
             index = random.randint(0, len(entertainmentList) - 1)
             text = entertainmentList[index]
             line_bot_api.reply_message(
