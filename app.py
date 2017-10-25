@@ -43,7 +43,7 @@ def callback():
 
 @handler.add(MessageEvent, message=(ImageMessage, TextMessage))
 def handle_message(event):
-    if isinstance(event.message, ImageMessage):
+    """if isinstance(event.message, ImageMessage):
         ext = 'jpg'
         message_content = line_bot_api.get_message_content(event.message.id)
         with tempfile.NamedTemporaryFile(dir=static_tmp_path, prefix=ext + '-', delete=False) as tf:
@@ -79,8 +79,9 @@ def handle_message(event):
         ext = 'mp4'
     elif isinstance(event.message, AudioMessage):
         ext = 'm4a'
-    elif isinstance(event.message, TextMessage):
-        if event.message.text == "看看大家都傳了什麼圖片":
+    el"""
+    if isinstance(event.message, TextMessage):
+        if event.message.text == "抽卡":
             client = ImgurClient(client_id, client_secret)
             images = client.get_album_images(album_id)
             index = random.randint(0, len(images) - 1)
@@ -92,13 +93,13 @@ def handle_message(event):
             line_bot_api.reply_message(
                 event.reply_token, image_message)
             return 0
-        else:
+        """else:
             line_bot_api.reply_message(
                 event.reply_token, [
                     TextSendMessage(text=' yoyo'),
                     TextSendMessage(text='請傳一張圖片給我')
                 ])
-            return 0
+            return 0"""
 
 
 if __name__ == '__main__':
