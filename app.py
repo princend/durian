@@ -81,7 +81,7 @@ def handle_message(event):
         ext = 'm4a'
     el"""
     if isinstance(event.message, TextMessage):
-        if event.message.text == "抽卡":
+        if event.message.text == "抽卡" or event.message.text == "抽":
             client = ImgurClient(client_id, client_secret)
             images = client.get_album_images(album_id)
             index = random.randint(0, len(images) - 1)
