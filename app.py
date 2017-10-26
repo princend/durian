@@ -12,7 +12,8 @@ from linebot.models import *
 
 import tempfile, os
 from config import client_id, client_secret, fgoAlbum_id, access_token, refresh_token, line_channel_access_token, \
-    line_channel_secret, gmAlbum_id
+    line_channel_secret, gmAlbum_id, clientDrawList, clientEatList, clientDoList, clientGmList, entertainmentList, \
+    foodAlbum_id
 
 app = Flask(__name__)
 
@@ -20,18 +21,6 @@ line_bot_api = LineBotApi(line_channel_access_token)
 handler = WebhookHandler(line_channel_secret)
 
 static_tmp_path = os.path.join(os.path.dirname(__file__), 'static', 'tmp')
-
-#Get Content List
-clientDrawList = ["抽", "抽卡"]
-clientEatList = ["吃什麼", "要吃啥", "甲三小"]
-clientDoList = ["要乾麻", "杯沖啥", "接下來?"]
-clientGmList = ["早", "早安", "morning", "good morning", "早r"]
-
-#Reply Content List
-foodList = ["麥噹噹", "肯德雞", "拿坡里", "胖老爹", "小火鍋", "鐵板類", "咖哩飯", "肉燥飯", "刀削麵",
-            "拉麵", "炒飯", "飯捲", "炸物", "湯包", "鍋貼"]
-entertainmentList = ["打街機", "玩桌遊", "書店", "逛百貨", "回家", "看電影", "唱歌"]
-
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -112,9 +101,16 @@ def handle_message(event):
         #What to eat
         for i in clientEatList:
             if clientText == i:
-                index = random.randint(0, len(foodList) - 1)
-                text = foodList[index]
-                line_bot_api.reply_message(event.reply_token, [TextSendMessage(text = text)])
+                client = ImgurClient(client_id, client_secret)
+                images = client.get_album_images(foodAlbum_id)
+                index = random.randint(0, len(images) - 1)
+                url = images[index].link
+                image_message = ImageSendMessage(
+                    original_content_url=url,
+                    preview_image_url=url
+                )
+                line_bot_api.reply_message(
+                    event.reply_token, image_message)
                 return 0
 
         #What to do
